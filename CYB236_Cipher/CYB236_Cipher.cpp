@@ -9,6 +9,11 @@ int main(int argc, char** argv)
     const size_t MSG_LENGTH = strlen((const char*)MSG);
     const uint64_t MSG_BITS = 8 * MSG_LENGTH;
 
-    CryptoAlgo::encrypt(MSG, MSG_LENGTH, KEY);
-
+	const std::pair<uint8_t*, size_t> ciphertext = CryptoAlgo::encrypt(MSG, MSG_LENGTH, KEY);
+	std::cout << std::endl << "Ciphertext:\n";
+	CryptoAlgo::printMsgBytes(ciphertext.first, ciphertext.second);
+	for (size_t i = 0; i < ciphertext.second; ++i)
+	{
+		std::cout << ciphertext.first[i];
+	}
 }

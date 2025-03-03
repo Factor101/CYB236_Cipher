@@ -127,7 +127,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CryptoAlgo.cpp" />
+    <ClCompile Include="CryptoAlgo_Encrypt.cpp" />
+    <ClCompile Include="CryptoAlgo_Decrypt.cpp" />
+    <ClCompile Include="CryptoAlgo_utils.cpp" />
     <ClCompile Include="CYB236_Cipher.cpp" />
   </ItemGroup>
   <ItemGroup>

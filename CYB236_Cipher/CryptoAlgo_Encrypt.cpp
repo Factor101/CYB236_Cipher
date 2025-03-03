@@ -1,7 +1,5 @@
 #include "CryptoAlgo.h"
 #include <iostream>
-#include "rijindael_sbox.h"
-#include <iomanip>
 
 std::pair<uint8_t*, size_t> CryptoAlgo::encrypt(const uint8_t* msg, const size_t msgSizeBytes, const uint32_t initialKey)
 {
@@ -20,9 +18,9 @@ std::pair<uint8_t*, size_t> CryptoAlgo::encrypt(const uint8_t* msg, const size_t
 	uint32_t key = initialKey;
 	for (uint64_t i = 0; i < nBlocks; ++i)
 	{
-		const auto curBlockLocation = state + (i * BLOCK_SIZE_BYTES);
+		uint8_t* curBlockLocation = state + (i * BLOCK_SIZE_BYTES);
 		CryptoAlgo::encryptBlock(curBlockLocation, key);
-		key = (key << KEYSHIFT_N_BITS) | (key >> (sizeof(key) * 8u - KEYSHIFT_N_BITS));
+		key = CryptoAlgo::circularShiftKey(key);
 	}
 
 	return std::make_pair(state, paddedStateSize);
@@ -56,8 +54,8 @@ void CryptoAlgo::encryptBlock(uint8_t* blockStart, const uint32_t key)
 	uint8_t* tmp = (uint8_t*)malloc(HALF_BLOCK_SIZE_BYTES);
 	if (tmp == nullptr)
 	{
-		std::cerr << "Failed to allocate memory for block swap!" << std::endl;
-		exit(-1);
+		std::cerr << "Failed to allocate memory for block swap!\n";
+		exit(-1); // NOLINT(concurrency-mt-unsafe)
 	}
 
 	// Swap left and right blocks
@@ -70,7 +68,7 @@ void CryptoAlgo::encryptBlock(uint8_t* blockStart, const uint32_t key)
 	free(tmp);
 }
 
-std::pair<uint8_t*, size_t> CryptoAlgo::padPlaintext(const uint8_t* msg, const size_t msgSizeBytes)
+std::pair<uint8_t*, size_t> CryptoAlgo::padPlaintext(const uint8_t* msg, const size_t msgSizeBytes) noexcept
 {
 	CryptoAlgo::printMsgBytes(msg, msgSizeBytes);
 
@@ -91,46 +89,4 @@ std::pair<uint8_t*, size_t> CryptoAlgo::padPlaintext(const uint8_t* msg, const s
 
 	// Return the padded message and its new size
 	return std::make_pair(paddedMsg, paddedSizeBytes);
-}
-
-void CryptoAlgo::xorBytes(uint8_t* bytes, const size_t nBytes, const uint8_t* operandBytes)
-{
-	for(size_t i = 0; i < nBytes; ++i)
-	{
-		bytes[i] ^= operandBytes[i];
-	}
-}
-
-void CryptoAlgo::xorBytesWithKey(uint8_t* bytes, const size_t nBytes, const uint32_t key)
-{
-	// XOR each byte w/ the corresponding byte of the key
-	// Key is right shifted by (i * 8) bits to get the correct byte
-	// Finally mask (& 0xFF) to get only the last 8 bits of the 32b key
-	for (size_t i = 0; i < nBytes; ++i)
-	{
-		bytes[i] ^= (key >> (i * 8)) & 0xFF;
-	}
-}
-
-void CryptoAlgo::applySBox(uint8_t* bytes, const size_t nBytes)
-{
-	// Apply S-Box to each byte of the right block
-	for(size_t i = 0; i < nBytes; ++i)
-	{
-		bytes[i] = SBOX[bytes[i]];
-	}
-}
-
-std::pair<uint8_t*, size_t> CryptoAlgo::decrypt(const uint8_t* msg, size_t msgSizeBytes, uint32_t initialKey)
-{
-	return std::make_pair(nullptr, 0);
-}
-
-void CryptoAlgo::printMsgBytes(const uint8_t* msg, const size_t msgSizeBytes)
-{
-	for(size_t i = 0; i < msgSizeBytes; ++i)
-	{
-		std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)msg[i] << " ";
-	}
-	std::cout << std::endl << std::dec;
 }

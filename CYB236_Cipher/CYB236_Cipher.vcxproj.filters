@@ -18,7 +18,13 @@
     <ClCompile Include="CYB236_Cipher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CryptoAlgo.cpp">
+    <ClCompile Include="CryptoAlgo_Encrypt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CryptoAlgo_utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CryptoAlgo_Decrypt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

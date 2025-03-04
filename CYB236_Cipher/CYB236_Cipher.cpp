@@ -43,6 +43,7 @@ int main(int argc, char** argv)
         std::cout << plaintext.first[i];
     }
 
+
     // assert that the decrypted plaintext is the same as the original message
     // (technically the decrypted plaintext should be the same as the original message)
     // (however we are not yet trimming the padding on the decrypted plaintext)

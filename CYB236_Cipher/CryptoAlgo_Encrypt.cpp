@@ -70,8 +70,6 @@ void CryptoAlgo::encryptBlock(uint8_t* blockStart, const uint32_t key)
 
 std::pair<uint8_t*, size_t> CryptoAlgo::padPlaintext(const uint8_t* msg, const size_t msgSizeBytes) noexcept
 {
-	CryptoAlgo::printMsgBytes(msg, msgSizeBytes);
-
 	// Pad the plaintext to a multiple of the block size
 	const auto sizeBits = msgSizeBytes * 8;
 	const size_t paddedSizeBytes = sizeBits % BLOCK_SIZE_BITS == 0
@@ -84,8 +82,9 @@ std::pair<uint8_t*, size_t> CryptoAlgo::padPlaintext(const uint8_t* msg, const s
 	memset(paddedMsg + msgSizeBytes, 0, paddedSizeBytes - msgSizeBytes);
 
 	printf("Padding plaintext from %zu bytes to %zu bytes\n", msgSizeBytes, paddedSizeBytes);
-	std::cout << "Padded plaintext (bytes):\n";
+	std::cout << "\nPadded plaintext (bytes):\n";
 	CryptoAlgo::printMsgBytes(paddedMsg, paddedSizeBytes);
+	std::cout << std::endl;
 
 	// Return the padded message and its new size
 	return std::make_pair(paddedMsg, paddedSizeBytes);
